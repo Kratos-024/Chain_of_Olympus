@@ -1,0 +1,12 @@
+========================================
+ Welcome to the Deimos Challenge
+========================================
+
+You are now inside the training grounds.
+
+Your journey will take you through a series 
+of 7 practical levels. Each level hides 
+the password for the next.
+
+Start at Level 1 and climb your way to the top.
+Good luck, challenger!

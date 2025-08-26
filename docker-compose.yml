@@ -1,0 +1,50 @@
+version: "3.8"
+
+networks:
+  deimos-network:
+    driver: bridge
+
+services:
+  ssh-router:
+    build:
+      context: ./parent
+      dockerfile: Dockerfile
+    container_name: deimos-ssh-router
+    ports:
+      - "2222:22"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:rw
+    networks:
+      - deimos-network
+    depends_on:
+      - deimos-level0
+    restart: unless-stopped
+    # security_opt:       # do not use no-new-privileges here
+
+  deimos-level0:
+    build:
+      context: ./levels/deimos0
+      dockerfile: Dockerfile
+    container_name: deimos-level0
+    networks:
+      - deimos-network
+    deploy:
+      resources:
+        limits:
+          memory: 64M
+          cpus: "0.25"
+        reservations:
+          memory: 32M
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETUID
+      - SETGID
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp:size=10M,mode=1777
+      - /home/deimos0/workspace:size=5M,uid=1000,gid=1000,mode=755
+    restart: unless-stopped

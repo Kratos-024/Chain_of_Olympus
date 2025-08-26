@@ -1,0 +1,16 @@
+Practical Challenges (Levels 1–7)
+
+1. Caesar Cipher
+2. Rail Fence Cipher
+3. Vigenère Cipher
+4. File Steganography
+5. Simple Reverse Engineering
+6. Hash Cracking (MD5/SHA1)
+7. Docker Escape (final)
+
+Instructions:
+- Begin at Level 1 with your starting account.
+- Each level hides the password for the next.
+- Solve the challenge in order to move forward.
+- Do not skip levels.
+- When you finish Level 7, you complete the lab.
