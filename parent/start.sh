@@ -25,7 +25,7 @@ if [ -S /var/run/docker.sock ]; then
         groupmod -g $DOCKER_GID docker 2>/dev/null || echo "Could not change docker group GID"
     fi
 
-    for i in $(seq 0 2); do
+    for i in $(seq 0 3); do
         adduser deimos$i docker 2>/dev/null || echo "Could not add deimos$i to docker group"
     done
 
@@ -40,7 +40,7 @@ if docker info >/dev/null 2>&1; then
     echo "✓ Docker daemon accessible as root"
 
     echo "Starting deimos containers..."
-    for i in $(seq 0 2); do
+    for i in $(seq 0 3); do
         echo "Starting deimos${i} container..."
         if docker run -d --name deimos${i}-container child-deimos${i} 2>/dev/null; then
             echo "✓ deimos${i} container started"

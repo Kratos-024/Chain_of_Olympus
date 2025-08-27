@@ -19,7 +19,7 @@ RUN adduser -D -s /bin/bash deimos0 && \
 RUN adduser -D -s /bin/bash deimos1 && echo "deimos1:zorivankelthura" | chpasswd && \
     adduser -D -s /bin/bash deimos2 && echo "deimos2:mivorandusklethe" | chpasswd && \
     adduser -D -s /bin/bash deimos3 && echo "deimos3:trevalquindoshar" | chpasswd && \
-    adduser -D -s /bin/bash deimos4 && echo "deimos4:selphariontukez" | chpasswd && \
+    adduser -D -s /bin/bash deimos4 && echo "deimos4:9bdc9763b08af007ba2db5221c3e9c7d04210dc62dfe4bc999864788b1917ff1" | chpasswd && \
     adduser -D -s /bin/bash deimos5 && echo "deimos5:dravenquorlithas" | chpasswd && \
     adduser -D -s /bin/bash deimos6 && echo "deimos6:kalvorithenquast" | chpasswd && \
     adduser -D -s /bin/bash deimos7 && echo "deimos7:threnovaridusk" | chpasswd 

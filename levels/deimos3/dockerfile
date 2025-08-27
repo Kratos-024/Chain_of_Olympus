@@ -1,7 +1,7 @@
 FROM alpine:latest
 
 # Install only required tools: bash, openssh, python3, nmap
-RUN apk add --no-cache bash openssh python3 nmap
+RUN apk add --no-cache bash nc openssh python3 nmap
 
 # Create non-root user
 RUN adduser -D -s /bin/bash deimos3 && \
@@ -15,6 +15,7 @@ RUN chown -R deimos3:deimos3 /home/deimos3
 #     sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin no/' /etc/ssh/sshd_config
 
 # ---- SECURE PYTHON SANDBOX ----
+
 # Create the sandbox directory first
 RUN mkdir -p /sandbox
 
