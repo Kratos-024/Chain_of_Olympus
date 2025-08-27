@@ -1,15 +1,18 @@
 FROM alpine:latest
 
-# Install only what’s needed
-RUN apk add --no-cache bash python3 nano coreutils util-linux
+# Install only required tools: bash, openssh, python3, nmap
+RUN apk add --no-cache bash openssh python3 nmap
 
 # Create non-root user
-RUN adduser -D -s /bin/bash deimos1 && \
-    echo "deimos1:zorivankelthura" | chpasswd
+RUN adduser -D -s /bin/bash deimos3 && \
+    echo "deimos3:trevalquindoshar" | chpasswd
 
-# Copy challenge file
-COPY encryptThenDecrypt.txt /home/deimos1/
-RUN chown -R deimos1:deimos1 /home/deimos1
+RUN chown -R deimos3:deimos3 /home/deimos3
+
+# # Configure SSH (no root login, password auth only)
+# RUN ssh-keygen -A && \
+#     sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config && \
+#     sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin no/' /etc/ssh/sshd_config
 
 # ---- SECURE PYTHON SANDBOX ----
 # Create the sandbox directory first
@@ -66,9 +69,14 @@ EOF
 # Make the wrapper script executable
 RUN chmod +x /sandbox/safe_python
 
+# Copy initial challenge file
+
+# Expose SSH
+EXPOSE 22
+
 # Switch to non-root user
-USER deimos1
-WORKDIR /home/deimos1
+USER deimos3
+WORKDIR /home/deimos3
 
 # Start idle (container waits)
 CMD ["tail", "-f", "/dev/null"]

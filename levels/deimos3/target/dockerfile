@@ -1,0 +1,14 @@
+FROM alpine:latest
+
+# Install only required tools: bash, openssh, python3, nmap
+RUN apk add --no-cache bash netcat-openbsd
+
+RUN echo "selphariontukez" > /secret.txt
+
+
+
+# Expose port 9000
+EXPOSE 9000
+
+# Start SSHD
+CMD ["sh", "-c", "while true; do nc -l -p 9000 < /secret.txt; done"]
