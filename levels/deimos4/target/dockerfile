@@ -1,0 +1,41 @@
+FROM alpine:latest
+
+# Install necessary tools
+RUN apk add --no-cache openssh
+
+# --- 1. Create and Configure the User ---
+
+# Create the 'target' user with a standard bash shell
+RUN adduser -D -s /bin/bash target
+
+# Set the password for the 'target' user
+RUN echo "target:SafePass2025!" | chpasswd
+
+# --- 2. Configure the SSH Server ---
+
+# Generate the server's host keys. This must be done once.
+RUN ssh-keygen -A
+
+# Configure sshd_config for our specific needs:
+# - Listen on Port 9000
+# - Permit root login to be disabled (good security practice)
+# - Enable PasswordAuthentication so the user can log in
+# - Disable a feature (UsePAM) that is not needed and can cause issues
+RUN sed -i 's/#Port 22/Port 9000/' /etc/ssh/sshd_config && \
+    sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin no/' /etc/ssh/sshd_config && \
+    sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config && \
+    sed -i 's/UsePAM yes/UsePAM no/' /etc/ssh/sshd_config
+
+# --- 3. Finalize Setup ---
+
+# Copy the flag file and set correct ownership
+COPY flag.txt /home/target/
+RUN chown -R target:target /home/target
+
+# Expose port 9000 from the container
+EXPOSE 9000
+
+# Start the SSH daemon in the foreground.
+# The '-D' flag is critical to keep the container running.
+# The '-e' flag prints errors to the Docker logs for easier debugging.
+CMD ["/usr/sbin/sshd", "-D", "-e"]

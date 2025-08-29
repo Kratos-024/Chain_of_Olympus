@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "Starting SSH daemon..."
-/usr/sbin/sshd  &
+/usr/sbin/sshd &
 sleep 2
 
 echo "=== USER PASSWORDS ==="
@@ -13,47 +13,34 @@ done < /tmp/pass.txt
 echo "======================"
 echo
 
-echo "=== Docker Socket Debug ==="
+echo "=== Configuring Docker Permissions ==="
 if [ -S /var/run/docker.sock ]; then
-    ls -la /var/run/docker.sock
+    # Get the Group ID (GID) of the Docker socket
     DOCKER_GID=$(stat -c %g /var/run/docker.sock)
-    echo "Docker socket GID: $DOCKER_GID"
+    echo "Docker socket found with GID: $DOCKER_GID"
 
+    # Create a 'docker' group with the correct GID if it doesn't exist
     if ! getent group docker >/dev/null; then
+        echo "Creating docker group with GID $DOCKER_GID..."
         addgroup -g $DOCKER_GID docker
     else
-        groupmod -g $DOCKER_GID docker 2>/dev/null || echo "Could not change docker group GID"
+        echo "Docker group already exists. Ensuring GID is correct."
+        groupmod -g $DOCKER_GID docker
     fi
 
-    for i in $(seq 0 3); do
-        adduser deimos$i docker 2>/dev/null || echo "Could not add deimos$i to docker group"
-    done
-
-    echo "Updated group memberships"
-else
-    echo "Docker socket not found"
-fi
-
-# Test Docker access as root
-echo "Testing Docker access as root..."
-if docker info >/dev/null 2>&1; then
-    echo "✓ Docker daemon accessible as root"
-
-    echo "Starting deimos containers..."
-    for i in $(seq 0 3); do
-        echo "Starting deimos${i} container..."
-        if docker run -d --name deimos${i}-container child-deimos${i} 2>/dev/null; then
-            echo "✓ deimos${i} container started"
-        else
-            echo "✗ deimos${i} container failed to start (may already exist)"
-            docker start deimos${i}-container 2>/dev/null && echo "  → deimos${i} container restarted"
-        fi
+    # Add all 'deimos' users to the 'docker' group so they can run docker-compose
+    for i in $(seq 0 7); do
+        echo "Adding deimos$i to docker group..."
+        adduser deimos$i docker
     done
 else
-    echo "✗ Docker daemon not accessible"
+    echo "ERROR: Docker socket not found at /var/run/docker.sock."
+    echo "Please ensure the Docker socket is mounted correctly into this container."
 fi
 
+# We have also removed the Docker access test as it's not necessary here.
+# The user-specific environments will be created on-demand.
+
+echo "Setup complete. The system is ready to route user sessions."
+echo "Waiting for SSH connections..."
 tail -f /dev/null
-
-
-

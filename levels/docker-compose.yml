@@ -1,0 +1,53 @@
+version: "3.9"
+
+services:
+  deimos0:
+    build:
+      context: .
+      dockerfile: deimos0/Dockerfile
+    image: child-deimos0-image
+
+  # deimos1:
+  #   build:
+  #     context: .
+  #     dockerfile: deimos1/Dockerfile
+  #   image: child-deimos1-image
+
+  #   ports:
+  #     - "2221:22"
+
+  # deimos2:
+  #   build:
+  #     context: .
+  #     dockerfile: deimos2/Dockerfile
+  #   image: child-deimos2-image
+
+  #   ports:
+  #     - "2222:22"
+
+  # deimos3:
+  #   build:
+  #     context: .
+  #     dockerfile: deimos3/Dockerfile
+  #   image: child-deimos3-image
+
+  #   ports:
+  #     - "2223:22"
+
+  # deimos4:
+  #   build:
+  #     context: .
+  #     dockerfile: deimos4/Dockerfile
+  #   image: child-deimos4-image
+
+  #   ports:
+  #     - "2224:22"
+
+  # deimos5:
+  #   build:
+  #     context: .
+  #     dockerfile: deimos5/Dockerfile
+  #   image: child-deimos5-image
+
+  #   ports:
+  #     - "2225:22"

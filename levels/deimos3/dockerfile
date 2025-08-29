@@ -14,58 +14,6 @@ RUN chown -R deimos3:deimos3 /home/deimos3
 #     sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config && \
 #     sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin no/' /etc/ssh/sshd_config
 
-# ---- SECURE PYTHON SANDBOX ----
-
-# Create the sandbox directory first
-RUN mkdir -p /sandbox
-
-# Use a 'cat' heredoc to create the script. This is the standard, robust way.
-# The single quotes around 'EOF' prevent the shell from expanding variables like $1.
-RUN cat <<'EOF' > /sandbox/safe_python
-#!/bin/sh
-# Wrapper to provide timeout and a secure Python environment.
-
-if [ -z "$1" ]; then
-    echo "Usage: /sandbox/safe_python <your_script.py>"
-    exit 1
-fi
-
-# Run the secure python executor with a 10s timeout.
-# The executor script is passed via another heredoc to python3.
-timeout 10s python3 - "$1" <<PYEOF
-import sys
-
-user_script_path = sys.argv[1]
-
-# THIS IS THE ALLOWLIST. Only functions listed here are available.
-# This is secure because if a function is not on the list, it cannot be used.
-safe_builtins = {
-    "print": print,
-    "open": open,
-    "len": len,
-    "ord": ord,
-    "chr": chr,
-    "range": range,
-    "int": int,
-    "str": str,
-    "Exception": Exception,
-}
-
-# The user script gets only our safe built-ins and nothing else.
-safe_globals = {"__builtins__": safe_builtins}
-safe_locals = {}
-
-try:
-    with open(user_script_path, "r") as f:
-        user_code = f.read()
-    # Execute the user code within the restricted environment
-    exec(user_code, safe_globals, safe_locals)
-except FileNotFoundError:
-    print(f"Error: Script \"{user_script_path}\" not found.", file=sys.stderr)
-except Exception as e:
-    print(f"An error occurred in your script: {e}", file=sys.stderr)
-PYEOF
-EOF
 
 # Make the wrapper script executable
 RUN chmod +x /sandbox/safe_python

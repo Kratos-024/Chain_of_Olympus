@@ -1,0 +1,8 @@
+firstly make a network 
+add firewall 
+add deimos4
+make him to write script to check breaching
+now make him to use that password to login in a different docekr 
+present in same network
+docker network create deimos-4-network-target --internal  without interet
+with 

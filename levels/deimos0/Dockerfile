@@ -5,7 +5,8 @@ RUN apk add --no-cache bash
 RUN adduser -D -s /bin/bash deimos0 && \
     echo 'deimos0:deimos0' | chpasswd
 
-COPY welcome.txt instructions.txt password.txt /home/deimos0/
+# inside deimos0/Dockerfile
+COPY deimos0/welcome.txt deimos0/instructions.txt deimos0/password.txt /home/deimos0/
 
 # Set proper ownership and permissions
 RUN chown -R deimos0:deimos0 /home/deimos0 && \
